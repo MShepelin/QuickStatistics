@@ -81,7 +81,7 @@ class TableFilterWidget(QtWidgets.QWidget):
 
     def custom_destroy(self):
         if self.owner is None:
-            raise Exception("Owner must be set before destroying")
+            raise Exception("Owner and list of other TableFilterWidget must be set before destroying")
         self.owner.removeWidget(self)
         sip.delete(self)
 
