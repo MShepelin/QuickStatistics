@@ -57,8 +57,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_zone       = QtWidgets.QVBoxLayout(self.filters_widget)
 
         # Barplots
-        self.barplots_title     = QtWidgets.QLabel("Графики сравнения по колонке")
-        self.barplot            = BarplotsWidget(self, width=5, height=5, dpi=100)
+        self.barplot            = None
 
         self.initUI()
 
@@ -95,17 +94,13 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.filters_zone.addWidget(self.filters_title)
 
-        self.barplots_title.setAlignment(QtCore.Qt.AlignCenter)
-        self.barplot.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-
         # Hide unneeded widgets
         self.filters_widget.hide()
         self.table_view.hide()
         self.add_filter.hide()
         self.use_filters.hide()
         self.remove_filters.hide()
-        self.barplot.hide()
-        self.barplots_title.hide()
+        self.filters_scroll.hide()
 
         self.show()
 
@@ -133,8 +128,10 @@ class MainMenu(QtWidgets.QMainWindow):
         self.remove_filters.show()
         self.use_filters.show()
 
+        self.filters_scroll.show()
+
     def unregister_filters(self):
-        self.table_and_filters.removeWidget(self.filters_widget)
+        self.table_and_filters.removeWidget(self.filters_scroll)
 
         for filter_widget in self.filters_list:
             filter_widget.custom_destroy()
@@ -148,6 +145,8 @@ class MainMenu(QtWidgets.QMainWindow):
         self.add_filter.hide()
         self.use_filters.hide()
         self.filters_widget.hide()
+
+        self.filters_scroll.hide()
 
     def register_table(self, dataframe):
         self.chosen_table = dataframe.copy()
@@ -203,6 +202,9 @@ class MainMenu(QtWidgets.QMainWindow):
                 self.model.model_dataframe[column].isin(values_list)]
             index += 1
 
+        self.unregister_column_barplot()
+        self.register_column_barplot()
+
     def set_barplot(self):
         self.barplot.axes.plot([0, 1, 2, 3], [5, 6, 2, 6])
 
@@ -211,13 +213,10 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
-        self.vertical_box.addWidget(self.barplots_title)
+        self.barplot = BarplotsWidget(self.model.model_dataframe, self)
         self.vertical_box.addWidget(self.barplot)
-        self.barplot.show()
-        self.barplots_title.show()
 
     def unregister_column_barplot(self):
-        self.vertical_box.removeWidget(self.barplots_title)
-        self.vertical_box.removeWidget(self.barplot)
-        self.barplot.hide()
-        self.barplots_title.hide()
+        if self.barplot:
+            self.vertical_box.removeWidget(self.barplot)
+            sip.delete(self.barplot)
