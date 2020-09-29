@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication
 import sys
-from support import MainMenu, TableFilterWidget
+from support import MainMenu
 
 def main():
     app = QApplication(sys.argv)

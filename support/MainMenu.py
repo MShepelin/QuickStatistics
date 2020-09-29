@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from support.TableFilterWidget import TableFilterWidget
+from support.BarplotsWidget import BarplotsWidget
 import pandas as pd
 import sip
 
@@ -55,6 +56,10 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_scroll     = QtWidgets.QScrollArea()
         self.filters_zone       = QtWidgets.QVBoxLayout(self.filters_widget)
 
+        # Barplots
+        self.barplots_title     = QtWidgets.QLabel("Графики сравнения по колонке")
+        self.barplot            = BarplotsWidget(self, width=5, height=5, dpi=100)
+
         self.initUI()
 
     def initUI(self):
@@ -90,12 +95,17 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.filters_zone.addWidget(self.filters_title)
 
+        self.barplots_title.setAlignment(QtCore.Qt.AlignCenter)
+        self.barplot.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
+
         # Hide unneeded widgets
         self.filters_widget.hide()
         self.table_view.hide()
         self.add_filter.hide()
         self.use_filters.hide()
         self.remove_filters.hide()
+        self.barplot.hide()
+        self.barplots_title.hide()
 
         self.show()
 
@@ -148,8 +158,10 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.show()
 
         self.register_filters()
+        self.register_column_barplot()
 
     def unregister_table(self):
+        self.unregister_column_barplot()
         self.unregister_filters()
 
         self.table_layout.removeWidget(self.table_view)
@@ -191,12 +203,21 @@ class MainMenu(QtWidgets.QMainWindow):
                 self.model.model_dataframe[column].isin(values_list)]
             index += 1
 
+    def set_barplot(self):
+        self.barplot.axes.plot([0, 1, 2, 3], [5, 6, 2, 6])
+
     def forget_filters(self):
         self.model.model_dataframe = self.chosen_table
         self.table_view.model().layoutChanged.emit()
 
-    def register_column_bar(self):
-        pass
+    def register_column_barplot(self):
+        self.vertical_box.addWidget(self.barplots_title)
+        self.vertical_box.addWidget(self.barplot)
+        self.barplot.show()
+        self.barplots_title.show()
 
-    def unregister_column_bar(self):
-        pass
+    def unregister_column_barplot(self):
+        self.vertical_box.removeWidget(self.barplots_title)
+        self.vertical_box.removeWidget(self.barplot)
+        self.barplot.hide()
+        self.barplots_title.hide()

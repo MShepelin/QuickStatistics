@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sip
 
 class TableFilterWidget(QtWidgets.QWidget):
-    def __init__(self, steps=5, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(TableFilterWidget, self).__init__(*args, **kwargs)
 
         self.owner = None
