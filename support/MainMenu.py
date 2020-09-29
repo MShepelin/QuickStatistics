@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from support.TableFilterWidget import TableFilterWidget
-from support.BarplotsWidget import BarplotsWidget
+from support.BarplotsWidget import HistWidget, SumWidget
 import pandas as pd
 import sip
 
@@ -213,7 +213,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
-        self.barplot = BarplotsWidget(self.model.model_dataframe, self, height=5)
+        self.barplot = HistWidget(self.model.model_dataframe, self, height=4)
         self.vertical_box.addWidget(self.barplot)
 
     def unregister_column_barplot(self):
@@ -221,4 +221,3 @@ class MainMenu(QtWidgets.QMainWindow):
             self.vertical_box.removeWidget(self.barplot)
             sip.delete(self.barplot)
             self.barplot = None
-
