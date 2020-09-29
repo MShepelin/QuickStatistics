@@ -213,10 +213,12 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
-        self.barplot = BarplotsWidget(self.model.model_dataframe, self)
+        self.barplot = BarplotsWidget(self.model.model_dataframe, self, height=5)
         self.vertical_box.addWidget(self.barplot)
 
     def unregister_column_barplot(self):
         if self.barplot:
             self.vertical_box.removeWidget(self.barplot)
             sip.delete(self.barplot)
+            self.barplot = None
+

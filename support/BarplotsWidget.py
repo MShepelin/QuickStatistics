@@ -10,14 +10,13 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 
 class BarplotsWidget(QtWidgets.QWidget):
-    def __init__(self, data, parent=None):
+    def __init__(self, data, parent=None, height=4):
         super(BarplotsWidget, self).__init__(parent)
 
         self.data = data # !not data.copy()
+        self.height = height
 
-        grid = sns.FacetGrid(data)
-        grid.map(sns.histplot, data.columns[0])
-        self.canvas = FigureCanvasQTAgg(grid.fig)
+        self.canvas = FigureCanvasQTAgg(plt.figure.Figure())
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         self.canvas.draw()
 
@@ -40,7 +39,7 @@ class BarplotsWidget(QtWidgets.QWidget):
         self.vlayout.addWidget(self.canvas)
 
     def update_data(self):
-        grid = sns.FacetGrid(self.data)
+        grid = sns.FacetGrid(self.data, height=self.height)
         grid.map(sns.histplot, str(self.combo_box.currentText()))
         self.canvas.figure = grid.fig
         self.canvas.draw()
