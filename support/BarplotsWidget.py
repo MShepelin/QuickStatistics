@@ -2,21 +2,21 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib as mlib
 from support import Constants as Const
-mlib.use('Qt5Agg')
-
 from PyQt5 import QtCore, QtWidgets
-
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
+mlib.use('Qt5Agg')
+
 
 class HistWidget(QtWidgets.QWidget):
-    def __init__(self, data, parent=None, height=4):
+    def __init__(self, data, parent=None, height=Const.default_graph_height):
         super(HistWidget, self).__init__(parent)
 
         self.data = data  # not data.copy()
         self.height = height
 
-        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(1, height + 4)))
+        self.ax = None
+        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height + 4), tight_layout=True))
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         self.canvas.draw()
 
@@ -74,19 +74,20 @@ class SumWidget(HistWidget):
         data_num = self.data.groupby(
             str(self.combo_box.currentText()))[[str(self.num_box.currentText())]].sum().reset_index()
 
-        print(data_num)
+        if (self.ax != None):
+            self.canvas.figure.delaxes(self.ax)
 
-        fig, ax = plt.subplots()
-        # bins = len(data_num.columns) #self.data[str(self.combo_box.currentText())].nunique()
-        ax.plot(data_num[str(self.combo_box.currentText())],
+        self.ax = self.canvas.figure.add_axes((0.12, 0.12, 0.76, 0.76), projection=None)
+
+        self.ax.plot(data_num[str(self.combo_box.currentText())],
                 data_num[str(self.num_box.currentText())])
 
-        ax.set_xlabel(str(self.combo_box.currentText()), fontsize=Const.default_fontsize)
-        ax.set_ylabel(str(self.num_box.currentText()), fontsize=Const.default_fontsize)
-        for tick in ax.xaxis.get_major_ticks():
+        self.ax.set_xlabel(str(self.combo_box.currentText()), fontsize=Const.default_fontsize)
+        self.ax.set_ylabel(str(self.num_box.currentText()), fontsize=Const.default_fontsize)
+        for tick in self.ax.xaxis.get_major_ticks():
             tick.label.set_fontsize(Const.details_fontsize)
-        for tick in ax.yaxis.get_major_ticks():
+        for tick in self.ax.yaxis.get_major_ticks():
             tick.label.set_fontsize(Const.details_fontsize)
-            
-        self.canvas.figure = fig
+
         self.canvas.draw()
+        self.canvas.resize_event()
