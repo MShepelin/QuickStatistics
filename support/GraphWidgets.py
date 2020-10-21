@@ -19,7 +19,7 @@ class HistWidget(QtWidgets.QWidget):
         # Draw empty canvas
         self.data = None
         self.ax = None
-        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height), tight_layout=True))
+        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height)))
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         self.canvas.draw()
 
