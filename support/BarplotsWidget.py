@@ -17,6 +17,7 @@ class HistWidget(QtWidgets.QWidget):
         self.height = height
 
         # Draw empty canvas
+        self.data = None
         self.ax = None
         self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height), tight_layout=True))
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
@@ -41,10 +42,12 @@ class HistWidget(QtWidgets.QWidget):
         self.vlayout.addWidget(self.canvas)
 
     def set_data(self, data):
+        # data can be changed outside and affect this object
+        # so when update_data is called user gets view of data in it's current state
         self.data = data
 
         self.combo_box.clear()
-        self.combo_box.addItems(data.columns)
+        self.combo_box.addItems(self.data.columns)
 
     def update_data(self):
         if self.ax is not None:
@@ -78,13 +81,13 @@ class SumWidget(HistWidget):
         super(SumWidget, self).set_data(data)
 
         self.num_box.clear()
-        self.num_box.addItems(data.columns)
+        self.num_box.addItems(self.data.columns)
 
     def update_num_data(self):
         if (self.data[str(self.num_box.currentText())].dtype not in [
             'float32', 'float64', 'int32', 'int64'] or
                 self.num_box.currentText() == self.combo_box.currentText()):
-            # print error message
+            # Print error message
             print("ERROR")
             return
 

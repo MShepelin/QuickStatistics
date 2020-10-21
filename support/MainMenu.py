@@ -205,15 +205,14 @@ class MainMenu(QtWidgets.QMainWindow):
             for i in range(filter_widget.list_needed_values.count()):
                 values_list.append(filter_widget.list_needed_values.item(i).text())
 
-            self.model.model_dataframe = self.model.model_dataframe[
-                self.model.model_dataframe[column].isin(values_list)]
+            self.model.model_dataframe.drop(
+                self.model.model_dataframe[
+                    ~self.model.model_dataframe[column].isin(values_list)
+                    ].index, inplace=True)
             index += 1
 
-        self.unregister_graphs()
-        self.register_graphs()
-
     def forget_filters(self):
-        self.model.model_dataframe = self.chosen_table.copy()
+        self.model.model_dataframe[:] = self.chosen_table.copy()
         self.table_view.model().layoutChanged.emit()
 
     def register_graphs(self):
