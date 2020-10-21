@@ -12,7 +12,7 @@ class HistWidget(QtWidgets.QWidget):
     def __init__(self, data, parent=None, height=Const.default_graph_height):
         super(HistWidget, self).__init__(parent)
 
-        self.data = data  # not data.copy()
+        self.data = data
         self.height = height
 
         self.ax = None

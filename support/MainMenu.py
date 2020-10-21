@@ -3,6 +3,7 @@ from PyQt5.QtCore import Qt, QSize
 from support.TableFilterWidget import TableFilterWidget
 from support.BarplotsWidget import HistWidget, SumWidget
 import pandas as pd
+from support import Constants as Const
 import sip
 
 
@@ -63,8 +64,8 @@ class MainMenu(QtWidgets.QMainWindow):
 
     def initUI(self):
         # Setup appearance
-        self.table_view.setMinimumHeight(300)
-        self.table_view.setMaximumHeight(300)
+        self.table_view.setMinimumHeight(Const.default_window_minsize)
+        self.table_view.setMaximumHeight(Const.default_window_minsize)
         self.open_table_button.clicked.connect(self.open_table)
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -75,7 +76,8 @@ class MainMenu(QtWidgets.QMainWindow):
         self.add_filter.clicked.connect(self.add_filter_function)
         self.use_filters.clicked.connect(self.parse_filters)
         self.remove_filters.clicked.connect(self.forget_filters)
-        self.setGeometry(512, 128, 1024, 512)
+        self.setGeometry(Const.starting_window_x, Const.starting_window_y,
+                         Const.starting_window_width, Const.starting_window_height)
         self.setWindowTitle('Quick Statistics')
 
         # Configure parents and children
@@ -106,7 +108,7 @@ class MainMenu(QtWidgets.QMainWindow):
 
     def add_filter_function(self):
         test_widget = TableFilterWidget()
-        test_widget.setMaximumSize(QtCore.QSize(16777215, 300))
+        test_widget.setMaximumSize(QtCore.QSize(16777215, default_window_minsize))
         test_widget.set_owner(self.filters_zone)
 
         test_widget.combo_box.addItems(self.model.model_dataframe.columns)
@@ -149,7 +151,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_scroll.hide()
 
     def register_table(self, dataframe):
-        self.chosen_table = dataframe.copy()
+        self.chosen_table = dataframe
         self.model = PandasModel(dataframe)
         self.table_view.setModel(self.model)
 
@@ -209,7 +211,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.barplot.axes.plot([0, 1, 2, 3], [5, 6, 2, 6])
 
     def forget_filters(self):
-        self.model.model_dataframe = self.chosen_table
+        self.model.model_dataframe = self.chosen_table.copy()
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
