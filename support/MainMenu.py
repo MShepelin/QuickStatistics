@@ -34,12 +34,15 @@ class MainMenu(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.common_style = QtGui.QFont(Const.default_text_style, Const.menu_fontsize)
+
         # Main sections
         self.widget            = QtWidgets.QWidget()
         self.scroll            = QtWidgets.QScrollArea()
         self.vertical_box      = QtWidgets.QVBoxLayout()
         self.table_and_filters = QtWidgets.QHBoxLayout()
         self.open_table_button = QtWidgets.QPushButton("Загрузить таблицу")
+        self.open_table_button.setFont(self.common_style)
         self.chosen_table      = None
         self.model             = None
 
@@ -47,11 +50,15 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_layout      = QtWidgets.QVBoxLayout()
         self.table_view        = QtWidgets.QTableView(self.widget)
         self.add_filter        = QtWidgets.QPushButton("Добавить фильтр")
+        self.add_filter.setFont(self.common_style)
         self.use_filters       = QtWidgets.QPushButton("Использовать фильтры")
+        self.use_filters.setFont(self.common_style)
         self.remove_filters    = QtWidgets.QPushButton("Отменить фильтры")
+        self.remove_filters.setFont(self.common_style)
 
         # Filters
         self.filters_title      = QtWidgets.QLabel("Добавление фильтров")
+        self.filters_title.setFont(self.common_style)
         self.filters_list       = list()
         self.filters_widget     = QtWidgets.QWidget(self.widget)
         self.filters_scroll     = QtWidgets.QScrollArea()
@@ -59,6 +66,7 @@ class MainMenu(QtWidgets.QMainWindow):
 
         # Graphs
         self.graphs             = QtWidgets.QTabWidget()
+        self.graphs.setFont(self.common_style)
         self.hist_tab           = HistWidget(self)
         self.sum_tab            = SumWidget(self)
         self.graphs.addTab(self.hist_tab, "Гистограмма")
