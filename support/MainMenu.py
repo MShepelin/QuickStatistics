@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt, QSize
 from support.TableFilterWidget import TableFilterWidget
-from support.BarplotsWidget import HistWidget, SumWidget
+from support.GraphWidgets import HistWidget, SumWidget
 import pandas as pd
 from support import Constants as Const
 import sip
