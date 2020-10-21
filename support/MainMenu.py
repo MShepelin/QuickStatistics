@@ -213,7 +213,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
-        self.barplot = HistWidget(self.model.model_dataframe, self, height=4)
+        self.barplot = SumWidget(self.model.model_dataframe, self, height=4)
         self.vertical_box.addWidget(self.barplot)
 
     def unregister_column_barplot(self):

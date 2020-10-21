@@ -75,9 +75,15 @@ class SumWidget(HistWidget):
         data_num = self.data.groupby(
             str(self.combo_box.currentText()))[[str(self.num_box.currentText())]].sum().reset_index()
 
+        print(data_num)
+
         fig, ax = plt.subplots()
-        bins = self.data[str(self.combo_box.currentText())].nunique()
-        ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black', linewidth=1.2)
+        # bins = len(data_num.columns) #self.data[str(self.combo_box.currentText())].nunique()
+        ax.plot(data_num[str(self.combo_box.currentText())],
+                data_num[str(self.num_box.currentText())])
+        ax.set_xlabel(str(self.combo_box.currentText())) #, fontsize = )
+        ax.set_ylabel(str(self.num_box.currentText())) #, fontsize = )
+        #ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black', linewidth=1.2)
 
         self.canvas.figure = fig
         self.canvas.draw()
