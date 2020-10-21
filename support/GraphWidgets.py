@@ -59,6 +59,13 @@ class HistWidget(QtWidgets.QWidget):
         self.ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black',
                      linewidth=1.2)
 
+        self.ax.set_xlabel(str(self.combo_box.currentText()), fontsize=Const.default_fontsize)
+        self.ax.set_ylabel("Количество занимаемых строк", fontsize=Const.default_fontsize)
+        for tick in self.ax.xaxis.get_major_ticks():
+            tick.label.set_fontsize(Const.details_fontsize)
+        for tick in self.ax.yaxis.get_major_ticks():
+            tick.label.set_fontsize(Const.details_fontsize)
+
         self.canvas.draw()
         self.canvas.resize_event()
 
