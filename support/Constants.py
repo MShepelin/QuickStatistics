@@ -8,3 +8,5 @@ starting_window_x = 512
 starting_window_y = 128
 starting_window_width = 1024
 starting_window_height = 512
+
+default_graph_positioning = (0.12, 0.12, 0.76, 0.76)

@@ -108,7 +108,7 @@ class MainMenu(QtWidgets.QMainWindow):
 
     def add_filter_function(self):
         test_widget = TableFilterWidget()
-        test_widget.setMaximumSize(QtCore.QSize(16777215, default_window_minsize))
+        test_widget.setMaximumSize(QtCore.QSize(16777215, Const.default_window_minsize))
         test_widget.set_owner(self.filters_zone)
 
         test_widget.combo_box.addItems(self.model.model_dataframe.columns)
@@ -212,7 +212,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.model().layoutChanged.emit()
 
     def register_column_barplot(self):
-        self.barplot = SumWidget(self.model.model_dataframe, self)
+        self.barplot = HistWidget(self.model.model_dataframe, self)
         self.vertical_box.addWidget(self.barplot)
 
     def unregister_column_barplot(self):

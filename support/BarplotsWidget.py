@@ -16,7 +16,7 @@ class HistWidget(QtWidgets.QWidget):
         self.height = height
 
         self.ax = None
-        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height + 4), tight_layout=True))
+        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(4, height), tight_layout=True))
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         self.canvas.draw()
 
@@ -39,17 +39,20 @@ class HistWidget(QtWidgets.QWidget):
         self.vlayout.addWidget(self.canvas)
 
     def update_data(self):
-        fig, ax = plt.subplots()
-        bins = self.data[str(self.combo_box.currentText())].nunique()
-        ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black', linewidth=1.2)
+        if self.ax is not None:
+            self.canvas.figure.delaxes(self.ax)
 
-        self.canvas.figure = fig
+        self.ax = self.canvas.figure.add_axes(Const.default_graph_positioning, projection=None)
+
+        bins = self.data[str(self.combo_box.currentText())].nunique()
+        self.ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black', linewidth=1.2)
+
         self.canvas.draw()
-        # call something so that canvas resizes itself using SizePolicy
+        self.canvas.resize_event()
 
 
 class SumWidget(HistWidget):
-    def __init__(self, data, parent=None, height=4):
+    def __init__(self, data, parent=None, height=Const.default_graph_height):
         super(SumWidget, self).__init__(data, parent, height)
 
         self.num_box = QtWidgets.QComboBox(self)
@@ -74,10 +77,10 @@ class SumWidget(HistWidget):
         data_num = self.data.groupby(
             str(self.combo_box.currentText()))[[str(self.num_box.currentText())]].sum().reset_index()
 
-        if (self.ax != None):
+        if self.ax is not None:
             self.canvas.figure.delaxes(self.ax)
 
-        self.ax = self.canvas.figure.add_axes((0.12, 0.12, 0.76, 0.76), projection=None)
+        self.ax = self.canvas.figure.add_axes(Const.default_graph_positioning, projection=None)
 
         self.ax.plot(data_num[str(self.combo_box.currentText())],
                 data_num[str(self.num_box.currentText())])
