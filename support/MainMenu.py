@@ -207,9 +207,6 @@ class MainMenu(QtWidgets.QMainWindow):
         self.unregister_column_barplot()
         self.register_column_barplot()
 
-    def set_barplot(self):
-        self.barplot.axes.plot([0, 1, 2, 3], [5, 6, 2, 6])
-
     def forget_filters(self):
         self.model.model_dataframe = self.chosen_table.copy()
         self.table_view.model().layoutChanged.emit()
