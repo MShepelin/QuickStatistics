@@ -10,7 +10,7 @@ import sip
 class PandasModel(QtCore.QAbstractTableModel):
     def __init__(self, df = pd.DataFrame()):
         QtCore.QAbstractTableModel.__init__(self)
-        self.model_dataframe = df # ! not df.copy() !
+        self.model_dataframe = df
 
     def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
@@ -157,7 +157,7 @@ class MainMenu(QtWidgets.QMainWindow):
 
     def register_table(self, dataframe):
         self.chosen_table = dataframe
-        self.model = PandasModel(dataframe)
+        self.model = PandasModel(dataframe.copy())
         self.table_view.setModel(self.model)
 
         self.table_layout.addWidget(self.table_view)
@@ -191,8 +191,7 @@ class MainMenu(QtWidgets.QMainWindow):
     def parse_filters(self):
         self.forget_filters()
 
-        index = 0
-        while (index < len(self.filters_list)):
+        for index in range(len(self.filters_list)):
             filter_widget = self.filters_list[index]
             if sip.isdeleted(filter_widget):
                 self.filters_list[index], self.filters_list[len(self.filters_list) - 1] = \
@@ -209,10 +208,12 @@ class MainMenu(QtWidgets.QMainWindow):
                 self.model.model_dataframe[
                     ~self.model.model_dataframe[column].isin(values_list)
                     ].index, inplace=True)
-            index += 1
+
+        print(self.chosen_table)
 
     def forget_filters(self):
-        self.model.model_dataframe[:] = self.chosen_table.copy()
+        self.model.model_dataframe.drop(self.model.model_dataframe.index, inplace=True)
+        self.model.model_dataframe.loc[:] = self.chosen_table.copy()
         self.table_view.model().layoutChanged.emit()
 
     def register_graphs(self):
