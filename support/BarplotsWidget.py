@@ -1,8 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import matplotlib as mlib
-import seaborn as sns
-import pandas as pd
+from support import Constants as Const
 mlib.use('Qt5Agg')
 
 from PyQt5 import QtCore, QtWidgets
@@ -14,10 +13,10 @@ class HistWidget(QtWidgets.QWidget):
     def __init__(self, data, parent=None, height=4):
         super(HistWidget, self).__init__(parent)
 
-        self.data = data # !not data.copy()
+        self.data = data  # not data.copy()
         self.height = height
 
-        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(1, height)))
+        self.canvas = FigureCanvasQTAgg(mlib.figure.Figure(figsize=(1, height + 4)))
         self.canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         self.canvas.draw()
 
@@ -81,9 +80,13 @@ class SumWidget(HistWidget):
         # bins = len(data_num.columns) #self.data[str(self.combo_box.currentText())].nunique()
         ax.plot(data_num[str(self.combo_box.currentText())],
                 data_num[str(self.num_box.currentText())])
-        ax.set_xlabel(str(self.combo_box.currentText())) #, fontsize = )
-        ax.set_ylabel(str(self.num_box.currentText())) #, fontsize = )
-        #ax.hist(self.data[str(self.combo_box.currentText())].astype('str'), bins=bins, edgecolor='black', linewidth=1.2)
 
+        ax.set_xlabel(str(self.combo_box.currentText()), fontsize=Const.default_fontsize)
+        ax.set_ylabel(str(self.num_box.currentText()), fontsize=Const.default_fontsize)
+        for tick in ax.xaxis.get_major_ticks():
+            tick.label.set_fontsize(Const.details_fontsize)
+        for tick in ax.yaxis.get_major_ticks():
+            tick.label.set_fontsize(Const.details_fontsize)
+            
         self.canvas.figure = fig
         self.canvas.draw()
