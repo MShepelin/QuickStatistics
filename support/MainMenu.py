@@ -57,8 +57,12 @@ class MainMenu(QtWidgets.QMainWindow):
         self.filters_scroll     = QtWidgets.QScrollArea()
         self.filters_zone       = QtWidgets.QVBoxLayout(self.filters_widget)
 
-        # Barplots
-        self.barplot            = None
+        # Graphs
+        self.graphs             = QtWidgets.QTabWidget()
+        self.hist_tab           = HistWidget(self)
+        self.sum_tab            = SumWidget(self)
+        self.graphs.addTab(self.hist_tab, "Гистограмма")
+        self.graphs.addTab(self.sum_tab, "Сравнение по сумме")
 
         self.initUI()
 
@@ -80,23 +84,24 @@ class MainMenu(QtWidgets.QMainWindow):
                          Const.starting_window_width, Const.starting_window_height)
         self.setWindowTitle('Quick Statistics')
 
-        # Configure parents and children
+        # Configure scrolling
         self.setCentralWidget(self.scroll)
         self.widget.setLayout(self.vertical_box)
         self.scroll.setWidget(self.widget)
 
+        # Add table editor's tabs
         self.vertical_box.addWidget(self.open_table_button)
         self.vertical_box.addLayout(self.table_and_filters)
         self.table_and_filters.addLayout(self.table_layout)
-        #++++ add other tasks
 
+        # Setup filters' tab
         self.filters_widget.setLayout(self.filters_zone)
         self.filters_scroll.setWidget(self.filters_widget)
         self.filters_scroll.setWidgetResizable(True)
         self.filters_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.filters_zone.addWidget(self.filters_title)
 
-        # Hide unneeded widgets
+        # Hide unused widgets
         self.filters_widget.hide()
         self.table_view.hide()
         self.add_filter.hide()
@@ -159,10 +164,10 @@ class MainMenu(QtWidgets.QMainWindow):
         self.table_view.show()
 
         self.register_filters()
-        self.register_column_barplot()
+        self.register_graphs()
 
     def unregister_table(self):
-        self.unregister_column_barplot()
+        self.unregister_graphs()
         self.unregister_filters()
 
         self.table_layout.removeWidget(self.table_view)
@@ -204,19 +209,19 @@ class MainMenu(QtWidgets.QMainWindow):
                 self.model.model_dataframe[column].isin(values_list)]
             index += 1
 
-        self.unregister_column_barplot()
-        self.register_column_barplot()
+        self.unregister_graphs()
+        self.register_graphs()
 
     def forget_filters(self):
         self.model.model_dataframe = self.chosen_table.copy()
         self.table_view.model().layoutChanged.emit()
 
-    def register_column_barplot(self):
-        self.barplot = HistWidget(self.model.model_dataframe, self)
-        self.vertical_box.addWidget(self.barplot)
+    def register_graphs(self):
+        self.vertical_box.addWidget(self.graphs)
+        self.sum_tab.set_data(self.model.model_dataframe)
+        self.hist_tab.set_data(self.model.model_dataframe)
+        self.graphs.show()
 
-    def unregister_column_barplot(self):
-        if self.barplot:
-            self.vertical_box.removeWidget(self.barplot)
-            sip.delete(self.barplot)
-            self.barplot = None
+    def unregister_graphs(self):
+        self.vertical_box.removeWidget(self.graphs)
+        self.graphs.hide()
